@@ -3,8 +3,6 @@
 (require racket/control)
 (require srfi/1) ;iota
 
-;3:10
-
 (define example
   '((5 3 0 0 7 0 0 0 0)
     (6 0 0 1 9 5 0 0 0)
@@ -59,8 +57,6 @@
       (unused-number (flatten (list (row sudoku y) (col sudoku x) (group sudoku (group-idx x y)))))))
 ;(candidates example 2 0)
 
-;; spent about 1 hour here. 4:08
-
 (define (substitute list n elem)
   (if (equal? n 0)
       (cons elem (cdr list))
@@ -73,8 +69,6 @@
       (error "is not candidate") '())
   (substitute sudoku y (substitute (row sudoku y) x n)))
 ;(apply-candidate example 8 0 4)
-
-; 4:20
 
 (define (flatten-one list)
   (foldr append '() list))
@@ -95,4 +89,3 @@
               '()
               (flatten-one (map (lambda (cand) (solutions (apply-candidate sudoku x y cand))) candidates)))))))
 ;(solutions example)
-; 5:27
