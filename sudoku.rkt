@@ -1,5 +1,7 @@
 #lang racket
 
+;3:10
+
 (define example
   '((5 3 0 0 7 0 0 0 0)
     (6 0 0 1 9 5 0 0 0)
@@ -52,3 +54,22 @@
   (if (not (equal? 0 (lookup sudoku x y)))
       '()
       (unused-number (flatten (list (row sudoku y) (col sudoku x) (group sudoku (group-idx x y)))))))
+
+;; spent about 1 hour here. 4:08
+
+(define (substitute list n elem)
+  (if (equal? n 0)
+      (cons elem (cdr list))
+      (cons (car list) (substitute (cdr list) (- n 1) elem))))
+
+(define (apply-candidate sudoku x y n)
+  (if (not (equal? (lookup sudoku x y) 0))
+      (error "is not emply") '())
+  (if (not (include? (candidate sudoku x y) n))
+      (error "is not candidate") '())
+  (substitute sudoku y (substitute (row sudoku y) x n)))
+;(candidate example 8 0 4)
+
+; 4:20
+
+(define (solve sudoku) '()) ;; XXX
