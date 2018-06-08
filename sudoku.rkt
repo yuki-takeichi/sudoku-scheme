@@ -1,5 +1,8 @@
 #lang racket
 
+(require racket/control)
+(require srfi/1) ;iota
+
 ;3:10
 
 (define example
@@ -50,10 +53,11 @@
 (define (unused-number list)
   (filter (lambda (n) (not (include? list n))) numbers))
 
-(define (candidate sudoku x y)
+(define (candidates sudoku x y)
   (if (not (equal? 0 (lookup sudoku x y)))
       '()
       (unused-number (flatten (list (row sudoku y) (col sudoku x) (group sudoku (group-idx x y)))))))
+;(candidates example 2 0)
 
 ;; spent about 1 hour here. 4:08
 
@@ -65,11 +69,30 @@
 (define (apply-candidate sudoku x y n)
   (if (not (equal? (lookup sudoku x y) 0))
       (error "is not emply") '())
-  (if (not (include? (candidate sudoku x y) n))
+  (if (not (include? (candidates sudoku x y) n))
       (error "is not candidate") '())
   (substitute sudoku y (substitute (row sudoku y) x n)))
-;(candidate example 8 0 4)
+;(apply-candidate example 8 0 4)
 
 ; 4:20
 
-(define (solve sudoku) '()) ;; XXX
+(define (flatten-one list)
+  (foldr append '() list))
+
+(define (search-space sudoku)
+  (filter (lambda (pair) (equal? 0 (lookup sudoku (car pair) (cdr pair))))
+          (flatten-one (map (lambda (x) (map (lambda (y) (cons x y)) (iota 9))) (iota 9)))))
+
+(define (solutions sudoku)
+  (let ((search-space (search-space sudoku)))
+    (if (empty? search-space)
+        (list sudoku) ;solved!
+        (let* ((pair (car search-space))
+               (x (car pair))
+               (y (cdr pair))
+               (candidates (candidates sudoku x y)))
+          (if (empty? candidates)
+              '()
+              (flatten-one (map (lambda (cand) (solutions (apply-candidate sudoku x y cand))) candidates)))))))
+;(solutions example)
+; 5:27
