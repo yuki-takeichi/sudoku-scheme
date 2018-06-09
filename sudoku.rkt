@@ -33,15 +33,12 @@
 (define (col sudoku x)
   (map (lambda (row) (nth row x)) sudoku))
 
-(define (group-idx x y)
-  (+ (* 3 (floor (/ y 3))) (floor (/ x 3))))
-
 (define (lookup sudoku x y)
   (nth (row sudoku y) x))
 
-(define (group sudoku idx)
-  (let ((y-idxs (map (lambda (y) (+ y (* (floor (/ idx 3)) 3))) '(0 1 2)))
-        (x-idxs (map (lambda (x) (+ x (* (modulo idx 3) 3))) '(0 1 2))))
+(define (group sudoku x y)
+  (let ((x-idxs (map (lambda (xi) (+ (* (floor (/ x 3)) 3) xi)) '(0 1 2)))
+        (y-idxs (map (lambda (yi) (+ (* (floor (/ y 3)) 3) yi)) '(0 1 2))))
     (flatten (map (lambda (x) (map (lambda (y) (lookup sudoku x y)) y-idxs)) x-idxs))))
 
 ;;
@@ -54,7 +51,7 @@
 (define (candidates sudoku x y)
   (if (not (equal? 0 (lookup sudoku x y)))
       '()
-      (unused-number (flatten (list (row sudoku y) (col sudoku x) (group sudoku (group-idx x y)))))))
+      (unused-number (flatten (list (row sudoku y) (col sudoku x) (group sudoku x y))))))
 ;(candidates example 2 0)
 
 (define (substitute list n elem)
