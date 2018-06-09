@@ -1,6 +1,5 @@
 #lang racket
 
-(require racket/control)
 (require srfi/1) ;iota
 
 (define example
